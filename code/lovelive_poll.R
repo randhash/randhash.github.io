@@ -88,7 +88,7 @@ song_df <- song_df %>%
 raw <- data.table::fread("C:\\Users\\Bearkey\\Documents\\Anime\\lovelive\\data\\lovelive_songpopularity2019.csv", data.table=FALSE) %>%
   filter_all(any_vars(.!=""))
 vote_limit <- data.frame(question_no=1:ncol(raw),
-                         limit=c(2, 2, 2, 2, 3, 3, 2,
+                         limit=c(2, 2, 2, 6, 3, 3, 3,
                                  3, 5, 1, 1, 6, 1, 2,
                                  2, 2, 5, 2, 2, 2, 2,
                                  2, 1, 1, 6, 1, 3, 1))
@@ -113,10 +113,9 @@ get_df <- function(i, type="tabulate") {
   vec <- str_split(vec, ", ") %>% unlist()
   vec <- vec[vec!=""]
   if (type=="info") {
-    df <- data.frame(stat=c("Number of ballots: ", "Number of votes: ", "Vote limit: "),
-               value=c(l, length(vec)+sum(comma_df[,"votes"]), vote_limit[i,"limit"]))
-    colnames(df) <- NULL
-    return(df)
+    data.frame(stat=c("Number of ballots: ", "Number of votes: ", "Vote limit: "),
+               value=c(l, length(vec)+sum(comma_df[,"votes"]), vote_limit[i,"limit"])) %>%
+    return()
   } else {
     data.frame(song=vec) %>%
       group_by(song) %>%
@@ -160,7 +159,7 @@ vote_sums <- vote_totals %>%
   as.data.frame()
 vote_totals <- vote_totals %>%
   left_join(vote_sums, by="question_no") %>%
-  mutate(prop=paste0(signif(votes/total, 3)*100, "%")) %>%
+  mutate(prop=(votes/total)*100) %>%
   select(-total)
 ##Set color map for songs
 hex <- fread("C:\\Users\\Bearkey\\Documents\\Anime\\lovelive\\data\\lovelive_hexcolors.csv", data.table=FALSE) %>%
@@ -201,7 +200,7 @@ get_ggplot <- function(qnum) {
   } else {
     gg <- base+geom_bar(stat="identity", aes(fill=song))+theme(legend.position="none")
   }
-  return(gg+geom_text(aes(label=paste(votes, prop, sep=", ")), hjust=-0.05))
+  return(gg+geom_text(aes(label=paste(votes, paste0(round(prop, 2), "%"), sep=", ")), hjust=-0.05))
 }
 ##Tabulating metadata for questions
 metadata <- lapply(1:length(questions), get_df, "info")

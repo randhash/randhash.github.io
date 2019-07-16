@@ -3,8 +3,9 @@ title: 2019 Love Live! Song Popularity Poll Results
 output:
   html_document:
     includes:
-      in_header: "favicon.html"
+      in_header: favicon.html
     toc: true
+    toc_depth: 2
     toc_float: true
 ---
 
@@ -41,11 +42,11 @@ get_ggplot <- function(qnum) {
   } else {
     gg <- base+geom_bar(stat="identity", aes(fill=song))+theme(legend.position="none")
   }
-  return(gg+geom_text(aes(label=paste(votes, prop, sep=", ")), hjust=-0.05))
+  return(gg+geom_text(aes(label=paste(votes, paste0(round(prop, 2), "%"), sep=", ")), hjust=-0.05))
 }
 tstyle <- function(df) {
   df %>%
-    kable("html") %>% 
+    kable("html", col.name=NULL) %>% 
     kable_styling(bootstrap_options="striped", full_width=FALSE)
 }
 ```
@@ -291,3 +292,123 @@ tstyle(metadata[[27]])
 get_ggplot(28)
 tstyle(metadata[[28]])
 ```
+
+<br/>
+
+#Some random observations
+
+---
+
+##Responses with the most votes {.tabset}
+
+###By raw vote total
+
+```{r}
+tstyle2 <- function(df) {
+  df %>%
+    kable("html") %>% 
+    kable_styling(bootstrap_options="striped", full_width=FALSE)
+}
+vote_totals <- rename(vote_totals, Response=song, Votes=votes, Question=question, Percentage=prop)
+vote_totals %>%
+  arrange(desc(Votes)) %>%
+  head(10) %>%
+  select(Response, Question, Votes) %>%
+  tstyle2()
+```
+
+###By adjusted vote total (Votes/Average number of votes per respondent)
+
+```{r}
+avg_resp <- function(df) df[2,2]/719
+vote_totals %>%
+  left_join(data.frame(question_no=1:length(metadata), avg_votes=sapply(metadata, avg_resp)), by="question_no") %>%
+  mutate(`Adjusted votes`=round(Votes/avg_votes, 2)) %>%
+  arrange(desc(`Adjusted votes`)) %>%
+  head(10) %>%
+  select(Response, Question, `Adjusted votes`) %>%
+  tstyle2()
+```
+
+* The average number of votes per respondent for a given question takes into account a respondent even if the respondent did not answer the question. The respondent is merely counted as providing 0 votes for the question. This interpretation has the caveat that this respondent answered at least one other question (or else the respondent would have already been removed as a blank ballot).
+
+##Responses with the highest percentages
+
+```{r}
+vote_totals %>%
+  arrange(desc(Percentage)) %>%
+  head(10) %>%
+  select(Response, Question, Percentage) %>%
+  mutate(Percentage=round(Percentage, 2)) %>%
+  tstyle2()
+```
+
+##Responses with the largest winning margins by percentage
+
+```{r}
+mrg <- function(vec) vec[1]-vec[2]
+margindf <- vote_totals %>%
+  arrange(question_no, desc(Percentage)) %>%
+  group_by(question_no) %>%
+  summarise(`Margin (%)`=mrg(Percentage)) %>%
+  as.data.frame()
+vote_totals %>%
+  group_by(question_no) %>%
+  filter(Percentage==max(Percentage)) %>%
+  left_join(margindf, by="question_no") %>%
+  arrange(desc(`Margin (%)`)) %>%
+  head(10) %>%
+  mutate(`Margin (%)`=paste0("+", round(`Margin (%)`, 2))) %>%
+  ungroup() %>%
+  select(Response, Question, `Margin (%)`) %>%
+  as.data.frame() %>%
+  tstyle2()
+```
+
+##Questions with the most/fewest number of ballots {.tabset}
+
+###Most
+
+```{r}
+questiondf <- vote_totals %>%
+  select(question_no, Question) %>%
+  unique()
+metadf <- plyr::rbind.fill(metadata) %>%
+  mutate(question_no=rep(1:length(metadata), each=3))
+metadf %>%
+  filter(stat=="Number of ballots: ") %>%
+  arrange(desc(value)) %>%
+  head(7) %>%
+  left_join(questiondf, by="question_no") %>%
+  select(Question, Ballots=value) %>%
+  tstyle2()
+```
+
+###Fewest
+
+```{r}
+metadf %>%
+  filter(stat=="Number of ballots: ") %>%
+  arrange(value) %>%
+  head(7) %>%
+  left_join(questiondf, by="question_no") %>%
+  select(Question, Ballots=value) %>%
+  tstyle2()
+```
+
+##Average number of votes per respondent by question
+
+```{r}
+metadf %>%
+  filter(stat=="Number of votes: ") %>%
+  mutate(av=value/719) %>%
+  mutate(`Vote limit`=filter(metadf, stat=="Vote limit: ")[,2]) %>%
+  mutate(`Response rate (%)`=round((av/`Vote limit`)*100, 2)) %>%
+  mutate(`Avg votes`=round(av, 2)) %>%
+  left_join(questiondf, by="question_no") %>%
+  select(Question, `Avg votes`, `Vote limit`, `Response rate (%)`) %>%
+  as.data.frame() %>%
+  tstyle2()
+```
+
+* The average number of votes per respondent for a given question takes into account a respondent even if the respondent did not answer the question. The respondent is merely counted as providing 0 votes for the question. This interpretation has the caveat that this respondent answered at least one other question (or else the respondent would have already been removed as a blank ballot).
