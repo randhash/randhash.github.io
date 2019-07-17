@@ -1,0 +1,215 @@
+<br/>
+
+#Section 1: Love Live! School Idol Project
+
+---
+
+##1. Which are your favorite µ's songs from Love Live! School Idol Project season 1?
+
+```{r eval=FALSE}
+get_ggplot(1)
+tstyle(metadata[[1]])
+```
+
+##2. Which are your favorite µ's songs from Love Live! School Idol Project Season 2?
+
+```{r eval=FALSE}
+get_ggplot(2)
+tstyle(metadata[[2]])
+```
+
+##3. Which are your favorite µ's songs from Love Live! The School Idol Movie?
+
+```{r}
+get_ggplot(3)
+tstyle(metadata[[3]])
+```
+
+##4. Which are your favorite non-insert µ's songs?
+
+```{r fig.asp=1.5}
+get_ggplot(4)
+tstyle(metadata[[4]])
+```
+
+##5. Which are your favorite BiBi songs?
+
+```{r}
+get_ggplot(5)
+tstyle(metadata[[5]])
+```
+
+##6. Which are your favorite lily white songs?
+
+```{r}
+get_ggplot(6)
+tstyle(metadata[[6]])
+```
+
+##7. Which are your favorite Printemps songs?
+
+```{r}
+get_ggplot(7)
+tstyle(metadata[[7]])
+```
+
+##8. Which are your favorite small group songs?
+
+```{r}
+get_ggplot(8)
+tstyle(metadata[[8]])
+```
+
+##9. Which are your favorite solo songs?
+
+```{r fig.asp=1.2}
+get_ggplot(9)
+tstyle(metadata[[9]])
+```
+
+##10. Which is your favorite A-RISE song?
+
+```{r}
+get_ggplot(10)
+tstyle(metadata[[10]])
+```
+
+##11. Out of every song from this section, which is your favorite?
+
+```{r fig.asp=3}
+get_ggplot(11)
+tstyle(metadata[[11]])
+```
+
+##12. Which is your favorite MV?
+
+```{r fig.asp=1.2}
+get_ggplot(12)
+tstyle(metadata[[12]])
+```
+
+##13. Which µ's member is your favorite singer?
+
+```{r}
+get_ggplot(13)
+tstyle(metadata[[13]])
+```
+
+<br/>
+
+#Section 2: Love Live! Sunshine!!
+
+---
+
+##1. Which are your favorite Aqours songs from Love Live! Sunshine!! season 1?
+
+```{r}
+get_ggplot(14)
+tstyle(metadata[[14]])
+```
+
+##2. Which are your favorite Aqours songs from Love Live! Sunshine!! season 2?
+
+```{r}
+get_ggplot(15)
+tstyle(metadata[[15]])
+```
+
+##3. Which are your favorite Aqours songs from Love Live! The School Idol Movie: Over The Rainbow?
+
+```{r}
+get_ggplot(16)
+tstyle(metadata[[16]])
+```
+
+##4. Which are your favorite non-insert Aqours songs?
+
+```{r fig.asp=1.2}
+get_ggplot(17)
+tstyle(metadata[[17]])
+```
+
+##5. Which are your favorite Guilty Kiss songs?
+
+```{r}
+get_ggplot(18)
+tstyle(metadata[[18]])
+```
+
+##6. Which are your favorite AZALEA songs?
+
+```{r}
+get_ggplot(19)
+tstyle(metadata[[19]])
+```
+
+##7. Which are your favorite CYaRon! songs?
+
+```{r}
+get_ggplot(20)
+tstyle(metadata[[20]])
+```
+
+##8. Which are your favorite duets/trios?
+
+```{r}
+get_ggplot(21)
+tstyle(metadata[[21]])
+```
+
+##9. Which are your favorite solo songs?
+
+```{r}
+get_ggplot(22)
+tstyle(metadata[[22]])
+```
+
+##10. Which is your favorite Saint Snow song?
+
+```{r}
+get_ggplot(23)
+tstyle(metadata[[23]])
+```
+
+##11. Out of every song from this section, which is your favorite?
+
+```{r fig.asp=3}
+get_ggplot(24)
+tstyle(metadata[[24]])
+```
+
+##12. Which is your favorite MV?
+
+```{r fig.asp=1.2}
+get_ggplot(25)
+tstyle(metadata[[25]])
+```
+
+##13. Which Aqours member is your favorite singer?
+
+```{r}
+get_ggplot(26)
+tstyle(metadata[[26]])
+```
+
+<br/>
+
+#Section 3: PERFECT Dream Project
+
+---
+
+##1. Which is your favorite PERFECT Dream Project song?
+
+```{r}
+get_ggplot(27)
+tstyle(metadata[[27]])
+```
+
+##2. Which PERFECT Dream Project member is your favorite singer?
+
+```{r}
+get_ggplot(28)
+tstyle(metadata[[28]])
+```
+
+<br/>

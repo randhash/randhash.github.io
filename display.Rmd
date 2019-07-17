@@ -1,0 +1,19 @@
+```{r results="asis"}
+header <- hd[{{i}},2]
+type <- hd[{{i}},1]
+if (type==1) {
+  cat("\n<br/>\n")
+  cat(paste0("\n#", header, " \n"))
+  cat("\n --- \n")
+  size <- NULL
+} else {
+  index <- which(row.names(hdq)=={{i}})
+  lab <- index %% 13
+  cat(paste0("##", ifelse(lab==0, 13, lab), ". ", header, " \n"))
+  size <- asp[index]
+}
+```
+
+```{r results="asis", fig.asp=size}
+if (type==2) get_disp(index)
+```
