@@ -1,10 +1,12 @@
 ---
-title: 2019 Love Live! Song Popularity Poll Results
+title: "2019 Love Live! Song Popularity Poll Results"
+author: "by [u/randhash](https://www.reddit.com/user/randhash/)"
+date: "`r format(Sys.time(), '%d %B %Y')`"
 output:
   html_document:
     css: styles.css
     includes:
-      in_header: favicon.html
+      in_header: head.html
     toc: true
     toc_depth: 2
     toc_float: true
@@ -14,6 +16,7 @@ output:
 library(magrittr)
 library(ggplot2)
 library(dplyr)
+library(stringr)
 library(kableExtra)
 library(knitr)
 opts_chunk$set(echo=FALSE, fig.width=12, fig.align="center")
@@ -23,7 +26,6 @@ song_color_map <- readRDS("C:\\Users\\Bearkey\\Documents\\Anime\\lovelive\\data\
 seiyuu_color_map <- readRDS("C:\\Users\\Bearkey\\Documents\\Anime\\lovelive\\data\\assets\\lovelive_seiyuucolormap.rds")
 song_outline <- readRDS("C:\\Users\\Bearkey\\Documents\\Anime\\lovelive\\data\\assets\\lovelive_songoutline.rds")
 metadata <- readRDS("C:\\Users\\Bearkey\\Documents\\Anime\\lovelive\\data\\assets\\lovelive_metadata.rds")
-intlink <- readRDS("C:\\Users\\Bearkey\\Documents\\Anime\\lovelive\\data\\assets\\lovelive_test.rds")
 hd <- readRDS("C:\\Users\\Bearkey\\Documents\\Anime\\lovelive\\data\\assets\\lovelive_headers.rds")
 hdq <- hd[hd[,1]==2,]
 txt1 <- 16
@@ -67,14 +69,23 @@ get_disp <- function(i) {
 }
 def <- 0.6
 asp <- c(def, def, def, 1.5, def, def, def,
-         def, 1.2, def, 3, 1.2, def, def,
+         def, 1.2, def, 3.2, 1.2, def, def,
          def, def, 1.2, def, def, def, def,
          def, def, 3, 1.2, def, def, def)
+usym <- function(string) {
+  escaped <- stringi::stri_escape_unicode(string)
+  if (grepl("\\\\u[[:alnum:]]{4}", escaped)) {
+    codes <- str_match_all(escaped, "\\\\u([[:alnum:]]{4})")[[1]][,2]
+    string <- escaped
+    for (i in 1:length(codes)) {
+      string <- gsub(paste0("\\\\u", codes[i]), paste0("&#x", codes[i], ";"), string)
+    }
+  }
+  return(gsub("~", "&#126;", string))
+}
 ```
 
 <br/>
-
-####1_which_is_your_favorite_perfect_dream_project_song123123
 
 #Introduction
 
@@ -228,42 +239,44 @@ metadf %>%
 
 * The average number of votes per respondent for a given question takes into account a respondent even if the respondent did not answer the question. The respondent is merely counted as providing 0 votes for the question. This interpretation has the caveat that this respondent answered at least one other question (or else the respondent would have already been removed as a blank ballot).
 
+<br/>
+
 #Song Index
+
+---
 
 ```{r results="asis"}
 linkdf <- vote_totals %>%
   filter(q_type=="song") %>%
   select(Response, question_no) %>%
-  arrange(Response, question_no) %>%
-  left_join(intlink, by="question_no")
+  arrange(Response, question_no)
 uniq <- unique(linkdf[,"Response"])
-cols <- 3
-brk <- seq(1, length(uniq), length.out=cols+1)[1:cols]
+brk <- ceiling(length(uniq)/2)+1
 labcon <- function(index) {
   lab <- index %% 13
   return(ifelse(lab==0, 13, lab))
 }
+cat("\n<div class='row'>\n")
 for (i in 1:length(uniq)) {
   song <- uniq[i]
-  df <- filter(linkdf, Response==song)
+  qno <- filter(linkdf, Response==song)[,"question_no"]
   if (i==1) {
-    cat('\n<div class="column-left">\n')
-  } else if (i==brk[2]) {
+    cat("\n<div class='column'>\n")
+  } else if (i==brk) {
     cat("\n</div>\n")
-    cat('\n<div class="column-center">\n')
-  } else if (i==brk[3]) {
-    cat("\n</div>\n")
-    cat('\n<div class="column-right">\n')
+    cat("\n<div class='column'>\n")
   }
-  qno <- df[,"question_no"]
-  cat(paste0("\n", df[1,"Response"], ": ", paste(paste0("[", paste0(ceiling(qno/13), ".", labcon(qno)), "](#", df[,"link"], ")"), collapse=", "), "\n"))
+  cat(paste0("\n", usym(song), ": ", paste(paste0("[", paste0(ceiling(qno/13), ".", labcon(qno)), "](#q", qno, ")"), collapse=", "), "\n"))
 }
+cat("\n</div>\n")
 cat("\n</div>\n")
 ```
 
-[blah](#section_1:_love_live_school_idol_project)
+<br/>
 
 #References
+
+---
 
 * Love Live! Wikia. Accessed July 12, 2019. https://love-live.fandom.com.
 * u/a-large-bee. "2019 Song Popularity Poll Results." r/SchoolIdolFestival. Last modified July 9, 2019. Accessed July 9, 2019. https://www.reddit.com/r/SchoolIdolFestival/comments/cb70qb/2019_song_popularity_poll_results.

@@ -9,7 +9,7 @@ if (type==1) {
 } else {
   index <- which(row.names(hdq)=={{i}})
   lab <- index %% 13
-  cat(paste0("##", ifelse(lab==0, 13, lab), ". ", header, " \n"))
+  cat(paste0("##", ifelse(lab==0, 13, lab), ". ", header, " {#q", index , "}\n"))
   size <- asp[index]
 }
 ```

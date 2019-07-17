@@ -1,17 +1,4 @@
-<style>
-.column-left{
+.column {
   float: left;
-  width: 33%;
-  text-align: left;
+  width: 50%;
 }
-.column-center{
-  display: inline-block;
-  width: 33%;
-  text-align: left;
-}
-.column-right{
-  float: right;
-  width: 33%;
-  text-align: left;
-}
-</style>
