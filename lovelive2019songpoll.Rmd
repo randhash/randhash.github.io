@@ -1,6 +1,6 @@
 ---
 title: "2019 Love Live! Song Popularity Poll Results"
-author: "by [u/randhash](https://www.reddit.com/user/randhash/)"
+author: "by [randhash](https://www.reddit.com/user/randhash/){target='_blank'}"
 date: "`r format(Sys.time(), '%d %B %Y')`"
 output:
   html_document:
@@ -49,14 +49,14 @@ get_ggplot <- function(qnum) {
           axis.title.x=element_text(size=txt1),
           legend.title=element_text(size=txt2),
           legend.text=element_text(size=txt2))+
-    scale_y_continuous(expand=expand_scale(mult=c(0, 0.155)))
+    scale_y_continuous(expand=expand_scale(mult=c(0, 0.142)))
   if (type=="song") {
-    gg <- base+geom_bar(stat="identity", aes(fill=Artist, col=Artist), size=1.2)+scale_color_manual(values=song_outline)
+    gg <- base+geom_bar(stat="identity", aes(fill=Artist, col=Artist), size=1.2)+scale_color_manual(values=song_outline)+guides(fill=guide_legend(ncol=4))
     if (length(unique(df$Artist))==1) gg <- gg+theme(legend.position="none")
   } else {
     gg <- base+geom_bar(stat="identity", aes(fill=song))+theme(legend.position="none")
   }
-  return(gg+geom_text(aes(label=paste(votes, paste0(round(prop, 2), "%"), sep=", ")), size=txt2*0.352778, hjust=-0.05))
+  return(gg+geom_text(aes(label=paste(votes, paste0(round(prop, 1), "%"), sep=", ")), size=txt2*0.352778, hjust=-0.05))
 }
 tstyle <- function(df) {
   df %>%
@@ -67,11 +67,6 @@ get_disp <- function(i) {
   print(get_ggplot(i))
   print(tstyle(metadata[[i]]))
 }
-def <- 0.6
-asp <- c(def, def, def, 1.5, def, def, def,
-         def, 1.2, def, 3.2, 1.2, def, def,
-         def, def, 1.2, def, def, def, def,
-         def, def, 3, 1.2, def, def, def)
 usym <- function(string) {
   escaped <- stringi::stri_escape_unicode(string)
   if (grepl("\\\\u[[:alnum:]]{4}", escaped)) {
@@ -83,6 +78,29 @@ usym <- function(string) {
   }
   return(gsub("~", "&#126;", string))
 }
+legart <- function(vec) {
+  if (length(unique(na.omit(vec)))>1) {
+    return(1)
+  } else {
+    return(0)
+  }
+}
+sizecalc <- function(c, l, limit=3.2) {
+  s <- (0.04*c)+(0.12*l)+0.1
+  s[s>=limit] <- limit
+  return(s)
+}
+leg <- vote_totals %>%
+  group_by(question_no) %>%
+  summarise(legend=legart(Artist)) %>%
+  as.data.frame()
+plotrows <- vote_totals %>%
+  group_by(question_no) %>%
+  summarise(count=n()) %>%
+  left_join(leg, by="question_no") %>%
+  mutate(size=sizecalc(count, legend)) %>%
+  as.data.frame()
+asp <- plotrows[,"size"]
 ```
 
 <br/>
@@ -93,11 +111,11 @@ usym <- function(string) {
 
 ##Acknowledgements
 
-This document displays Love Love! song popularity results from [an online poll](https://www.reddit.com/r/SchoolIdolFestival/comments/c9htvz/hello_ive_made_a_poll_that_ranks_the_popularity/), which was created by [u/a-large-bee](https://www.reddit.com/user/a-large-bee) aka [idolfestivals](https://idolfestivals.tumblr.com/) and was open from July 5 to 8, 2019. The OP released the poll results in [this reddit post](https://www.reddit.com/r/SchoolIdolFestival/comments/cb70qb/2019_song_popularity_poll_results/). Many thanks to the OP for creating the opportunity to gauge the opinions of the wider Love Live! community.
+This document displays Love Love! song popularity results from [an online poll](https://www.reddit.com/r/SchoolIdolFestival/comments/c9htvz/hello_ive_made_a_poll_that_ranks_the_popularity/){target="_blank"}, which was created by [a-large-bee](https://www.reddit.com/user/a-large-bee){target="_blank"} aka [idolfestivals](https://idolfestivals.tumblr.com/){target="_blank"} and was open from July 5 to 8, 2019. The OP released the poll results in [this reddit post](https://www.reddit.com/r/SchoolIdolFestival/comments/cb70qb/2019_song_popularity_poll_results/){target="_blank"}. Many thanks to the OP for creating the opportunity to gauge the opinions of the wider Love Live! community.
 
 ##Some general poll statistics
 
-In total, the poll received 734 ballots. However, the poll recorded 719 ballots after removing ballots whose respondents did not answer at least one question (e.g. the ballot was blank). As indicated by the OP in the results document, the poll was disseminated online through [the SchoolIdolFestival subreddit](https://www.reddit.com/r/SchoolIdolFestival/) and [Tumblr](https://idolfestivals.tumblr.com/).
+In total, the poll received 734 ballots. However, the poll recorded 719 ballots after removing ballots whose respondents did not answer at least one question (e.g. the ballot was blank). As indicated by the OP in the results document, the poll was disseminated online through [the SchoolIdolFestival subreddit](https://www.reddit.com/r/SchoolIdolFestival/){target="_blank"} and [Tumblr](https://idolfestivals.tumblr.com/){target="_blank"}.
 
 Out of the 28 questions in the poll, 13 questions were related to Love Live! School Idol Project, 13 questions were related to Love Live! Sunshine!!, and 2 questions were related to PERFECT Dream Project.
 
@@ -184,7 +202,7 @@ vote_totals %>%
   left_join(margindf, by="question_no") %>%
   arrange(desc(`Margin (%)`)) %>%
   head(10) %>%
-  mutate(`Margin (%)`=paste0("+", round(`Margin (%)`, 2))) %>%
+  mutate(`Margin (%)`=paste0("+", round(`Margin (%)`, 1))) %>%
   ungroup() %>%
   select(Response, Question, `Margin (%)`) %>%
   as.data.frame() %>%
@@ -278,5 +296,5 @@ cat("\n</div>\n")
 
 ---
 
-* Love Live! Wikia. Accessed July 12, 2019. https://love-live.fandom.com.
-* u/a-large-bee. "2019 Song Popularity Poll Results." r/SchoolIdolFestival. Last modified July 9, 2019. Accessed July 9, 2019. https://www.reddit.com/r/SchoolIdolFestival/comments/cb70qb/2019_song_popularity_poll_results.
+* a-large-bee. "2019 Song Popularity Poll Results." r/SchoolIdolFestival. Last modified July 9, 2019. Accessed July 9, 2019. [https://www.reddit.com/r/SchoolIdolFestival/comments/cb70qb/2019_song_popularity_poll_results](https://www.reddit.com/r/SchoolIdolFestival/comments/cb70qb/2019_song_popularity_poll_results/){target="_blank"}.
+* Love Live! Wikia. Accessed July 12, 2019. [https://love-live.fandom.com](https://love-live.fandom.com/){target="_blank"}.
